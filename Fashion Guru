@@ -1,0 +1,52 @@
+import SwiftUI
+
+struct DesignerGoods: Identifiable {
+    let id = UUID()
+    var name: String
+    var description: String
+    var image: UIImage?
+}
+
+struct Closet: Identifiable {
+    let id = UUID()
+    var name: String
+    var designerGoods: [DesignerGoods]
+}
+
+struct UserProfile: Identifiable {
+    let id = UUID()
+    var name: String
+    var closets: [Closet]
+}
+
+struct ContentView: View {
+    @State var designerGoods: [DesignerGoods] = [
+        DesignerGoods(name: "Gucci Ace Sneakers", description: "Classic sneakers with Gucci's signature web and bee embroidery", image: UIImage(named: "gucci_ace_sneakers")),
+        DesignerGoods(name: "Chanel Boy Bag", description: "Timeless bag with the iconic CC logo and aged calfskin leather", image: UIImage(named: "chanel_boy_bag")),
+        DesignerGoods(name: "Balenciaga Triple S Sneakers", description: "Chunky sneakers with a triple-stacked sole and distressed detailing", image: UIImage(named: "balenciaga_triple_s_sneakers"))
+    ]
+    
+    @State var closets: [Closet] = [
+        Closet(name: "Casual Wear", designerGoods: [DesignerGoods(name: "Gucci Ace Sneakers", description: "Classic sneakers with Gucci's signature web and bee embroidery", image: UIImage(named: "gucci_ace_sneakers"))]),
+        Closet(name: "Formal Wear", designerGoods: [DesignerGoods(name: "Chanel Boy Bag", description: "Timeless bag with the iconic CC logo and aged calfskin leather", image: UIImage(named: "chanel_boy_bag"))]),
+        Closet(name: "Athletic Wear", designerGoods: [DesignerGoods(name: "Balenciaga Triple S Sneakers", description: "Chunky sneakers with a triple-stacked sole and distressed detailing", image: UIImage(named: "balenciaga_triple_s_sneakers"))])
+    ]
+    
+    @State var users: [UserProfile] = [
+        UserProfile(name: "Anna Smith", closets: [Closet(name: "Casual Wear", designerGoods: [DesignerGoods(name: "Gucci Ace Sneakers", description: "Classic sneakers with Gucci's signature web and bee embroidery", image: UIImage(named: "gucci_ace_sneakers"))]), Closet(name: "Formal Wear", designerGoods: [DesignerGoods(name: "Chanel Boy Bag", description: "Timeless bag with the iconic CC logo and aged calfskin leather", image: UIImage(named: "chanel_boy_bag"))])]),
+        UserProfile(name: "John Doe", closets: [Closet(name: "Athletic Wear", designerGoods: [DesignerGoods(name: "Balenciaga Triple S Sneakers", description: "Chunky sneakers with a triple-stacked sole and distressed detailing", image: UIImage(named: "balenciaga_triple_s_sneakers"))])])
+    ]
+    
+    @State private var selectedDesignerGoods: DesignerGoods?
+    @State private var selectedCloset: Closet?
+    @State private var selectedUserProfile: UserProfile?
+    @State private var showDesignerGoodsSheet = false
+    @State private var showClosetSheet = false
+    @State private var showUserProfileSheet = false
+    
+    var body: some View {
+        NavigationView {
+            VStack {
+                List {
+                    Section(header: Text("Designer Goods")) {
+                        ForEach(designerGoods
