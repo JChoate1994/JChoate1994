@@ -1,0 +1,110 @@
+import SwiftUI
+
+struct Pet: Identifiable {
+    let id = UUID()
+    var name: String
+    var breed: String
+    var age: Int
+    var image: UIImage?
+}
+
+struct ContentView: View {
+    @State var pets: [Pet] = [
+        Pet(name: "Buddy", breed: "Labrador Retriever", age: 3, image: UIImage(named: "dog1")),
+        Pet(name: "Luna", breed: "German Shepherd", age: 2, image: UIImage(named: "dog2")),
+        Pet(name: "Simba", breed: "Persian Cat", age: 1, image: UIImage(named: "cat1")),
+        Pet(name: "Fluffy", breed: "Ragdoll Cat", age: 4, image: UIImage(named: "cat2"))
+    ]
+    
+    @State private var showAddPetSheet = false
+    
+    var body: some View {
+        NavigationView {
+            List(pets) { pet in
+                NavigationLink(destination: PetDetailView(pet: pet)) {
+                    PetRowView(pet: pet)
+                }
+            }
+            .navigationTitle("My Pets")
+            .navigationBarItems(trailing: Button(action: {
+                showAddPetSheet = true
+            }, label: {
+                Image(systemName: "plus.circle.fill")
+                    .font(.title)
+            }))
+            .sheet(isPresented: $showAddPetSheet, content: {
+                AddPetView(pets: $pets, showAddPetSheet: $showAddPetSheet)
+            })
+        }
+    }
+}
+
+struct PetRowView: View {
+    let pet: Pet
+    
+    var body: some View {
+        HStack {
+            if let image = pet.image {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 80, height: 80)
+                    .clipShape(Circle())
+            } else {
+                Image(systemName: "photo")
+                    .font(.system(size: 50))
+                    .foregroundColor(.gray)
+                    .frame(width: 80, height: 80)
+                    .background(Color.white)
+                    .clipShape(Circle())
+            }
+            VStack(alignment: .leading) {
+                Text(pet.name)
+                    .font(.headline)
+                Text("\(pet.breed) • \(pet.age) years old")
+                    .foregroundColor(.gray)
+            }
+        }
+    }
+}
+
+struct PetDetailView: View {
+    let pet: Pet
+    
+    var body: some View {
+        VStack {
+            if let image = pet.image {
+                Image(uiImage: image)
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .padding()
+            } else {
+                Image(systemName: "photo")
+                    .font(.system(size: 150))
+                    .foregroundColor(.gray)
+                    .padding()
+            }
+            Text(pet.name)
+                .font(.title)
+            Text("\(pet.breed) • \(pet.age) years old")
+                .foregroundColor(.gray)
+                .padding()
+            Spacer()
+        }
+        .navigationTitle(pet.name)
+    }
+}
+
+struct AddPetView: View {
+    @Binding var pets: [Pet]
+    @Binding var showAddPetSheet: Bool
+    
+    @State private var name = ""
+    @State private var breed = ""
+    @State private var age = ""
+    @State private var image: UIImage?
+    
+    var body: some View {
+        NavigationView {
+            Form {
+                Section(header: Text("Pet Information"))
